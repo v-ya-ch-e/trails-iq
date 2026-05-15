@@ -91,7 +91,7 @@ The judges value **correct uncertainty handling** over confident wrong answers. 
 1. Create shared network (one-time):
    - `docker network create chainiq-network`
 2. Copy env files:
-   - `cp .env.example .env`
+   - `cp .env.local.example .env.local`
    - `cp backend/organisational_layer/.env.example backend/organisational_layer/.env`
    - `cp backend/logical_layer/.env.example backend/logical_layer/.env`
 3. Start backend stack:
@@ -119,7 +119,7 @@ Default local URLs:
 
 - Full deployment guide: `DEPLOYMENT.md` (covers local dev, AWS EC2 + RDS, nginx reverse proxy)
 - Reference nginx config: `deploy/nginx/aws.conf`
-- AWS env template: `.env.aws.example`
+- Deployed frontend env template: `.env.deployed.example`
 
 ## Evaluation Traceability (added via dev merge)
 

@@ -1,6 +1,6 @@
 # Pipeline API Reference
 
-The ChainIQ Logical Layer exposes a 9-step procurement decision pipeline via REST endpoints. All endpoints are served at `http://localhost:8080` (or `http://logical-layer:8080` inside Docker).
+The TrailsIQ Logical Layer exposes a 9-step procurement decision pipeline via REST endpoints. All endpoints are served at `http://localhost:8080` (or `http://logical-layer:8080` inside Docker).
 
 ---
 
@@ -12,7 +12,7 @@ The ChainIQ Logical Layer exposes a 9-step procurement decision pipeline via RES
 │  (Next.js)   │   :3000      │  (FastAPI :8080)  │   :8000      │  (FastAPI :8000)      │
 └─────────────┘               │                   │               │                       │
                               │  9-Step Pipeline   │               │  MySQL (AWS RDS)      │
-                              │  LLM (Anthropic)   │               │  37 tables            │
+                              │  LLM (Anthropic)   │               │  38 tables            │
                               └──────────────────┘               └──────────────────────┘
 ```
 

@@ -6,7 +6,7 @@
 
 # **SERVICE OVERVIEW**
 
-FastAPI backend microservice for the ChainIQ procurement platform. Provides CRUD and analytics endpoints for 37 normalised MySQL tables hosted on AWS RDS.
+FastAPI backend microservice for the TrailsIQ procurement platform. Provides CRUD and analytics endpoints for 38 normalised MySQL tables hosted on MySQL/RDS.
 
 ## How to run
 

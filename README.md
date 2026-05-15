@@ -1,16 +1,32 @@
-# ChainIQ — Audit-Ready Autonomous Sourcing Agent
+# TrailsIQ
 
-## TRY IT OUT
-http://3.68.96.236:3000/
+Audit-ready autonomous sourcing for messy enterprise purchase requests.
 
-**START Hack 2026 — ChainIQ Challenge**
+**START Hack 2026 - ChainIQ Challenge**
 
-A full-stack prototype that converts unstructured, multilingual purchase requests into structured, defensible supplier comparisons with transparent reasoning, rule versioning, and escalation logic. The system processes 304 real-world procurement requests across 19 countries, 3 currencies, and 4 category families — producing auditable decisions end to end.
+TrailsIQ is a full-stack AI web app that converts unstructured, multilingual purchase requests into structured, defensible supplier comparisons with transparent reasoning, rule versioning, and escalation logic. It processes 304 synthetic procurement scenarios across 19 countries, 3 currencies, and 4 category families, producing auditable decisions end to end.
+
+## Demo
+
+The primary demo path is local and Docker-based:
+
+```bash
+make local-up
+open http://localhost:3000
+```
+
+Suggested demo flow:
+- Open the case workspace and process a standard request such as `REQ-000004`.
+- Review the supplier comparison, ranked shortlist, excluded suppliers, and decision timeline.
+- Trigger an edge case with missing or contradictory request data to show escalation handling.
+
+Screenshots or a short GIF should be added under `docs/assets/` before publishing the repository broadly.
 
 ---
 
 ## Table of Contents
 
+- [Demo](#demo)
 - [Architecture](#architecture)
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
@@ -27,6 +43,7 @@ A full-stack prototype that converts unstructured, multilingual purchase request
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Design Principles](#design-principles)
+- [Hackathon Notes](#hackathon-notes)
 - [License](#license)
 
 ---
@@ -56,7 +73,7 @@ A full-stack prototype that converts unstructured, multilingual purchase request
                                               ┌─────▼─────┐
                                               │  MySQL 8.4 │
                                               │  38 tables │
-                                              │  AWS RDS   │
+                                              │  Local/RDS  │
                                               └────────────┘
 ```
 
@@ -118,7 +135,7 @@ The frontend provides an intelligent chat-based intake assistant that helps requ
 ## Project Structure
 
 ```
-chainIQ-START-Hack/
+trailsiq/
 ├── frontend/                        # Next.js web application
 │   ├── src/
 │   │   ├── app/                     # App Router pages and API routes
@@ -184,32 +201,40 @@ chainIQ-START-Hack/
 ### Prerequisites
 
 - Docker Engine 20.10+ with Docker Compose plugin
+- Make
 - Git
 
 ### Quick Start
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/your-org/chainIQ-START-Hack.git
-cd chainIQ-START-Hack
+# 1. Clone your fork
+git clone <your-repository-url>
+cd <repository-directory>
 
 # 2. Create the shared Docker network (one-time)
 docker network create chainiq-network
 
 # 3. Configure environment files
-cp .env.example .env
+cp .env.local.example .env.local
 cp backend/organisational_layer/.env.example backend/organisational_layer/.env
 cp backend/logical_layer/.env.example backend/logical_layer/.env
 # Edit .env files with your database credentials and API keys
 
-# 4. Start backend services
+# 4. Start local database and bootstrap it
+docker compose --env-file .env.local --profile localdb up -d mysql
+docker compose --env-file .env.local --profile tools run --rm migrator
+
+# 5. Start backend services
 cd backend && docker compose up --build -d && cd ..
 
-# 5. Start frontend
-docker compose up --build
+# 6. Start frontend
+docker compose --env-file .env.local up --build frontend
+```
 
-# 6. Bootstrap the database (first run only)
-docker compose --profile tools run --rm migrator
+Or use the Makefile shortcut:
+
+```bash
+make local-up
 ```
 
 ### Verify
@@ -239,6 +264,9 @@ make local-down    # Stop everything
 | `ANTHROPIC_MODEL` | Logical Layer | Model selection (default: `claude-sonnet-4-6`) |
 | `BACKEND_INTERNAL_URL` | Frontend | Org Layer URL for server-side rendering |
 | `LOGICAL_BACKEND_INTERNAL_URL` | Frontend | Logical Layer URL for pipeline proxying |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET_NAME` | Frontend | Optional S3 upload configuration |
+
+Safe templates are committed as `.env.example`, `.env.local.example`, `.env.deployed.example`, and service-level `.env.example` files. Real `.env` files are intentionally ignored.
 
 ---
 
@@ -533,6 +561,14 @@ For detailed instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ---
 
+## Hackathon Notes
+
+TrailsIQ was built as a START Hack 2026 prototype for the ChainIQ challenge. The dataset is synthetic challenge data, not production procurement data. Authentication, authorization, and production hardening were intentionally kept out of scope for the hackathon demo; do not expose the APIs publicly without adding those controls and rotating any credentials used during deployment.
+
+Recommended GitHub topics: `procurement`, `sourcing`, `audit-trail`, `ai-agent`, `fastapi`, `nextjs`, `mysql`, `docker`, `hackathon`, `start-hack`.
+
+---
+
 ## Design Principles
 
 | Principle | Implementation |
@@ -550,4 +586,4 @@ For detailed instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## License
 
-Hackathon project — START Hack 2026.
+MIT. See [LICENSE](LICENSE).

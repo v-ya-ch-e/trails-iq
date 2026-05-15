@@ -1,6 +1,6 @@
-# Deployment Guide — ChainIQ Full Stack
+# Deployment Guide - TrailsIQ Full Stack
 
-This guide covers deploying the complete ChainIQ system: two backend microservices, a Next.js frontend, and a MySQL database.
+This guide covers deploying TrailsIQ, the START Hack 2026 ChainIQ challenge prototype: two backend microservices, a Next.js frontend, and a MySQL database.
 
 ## Architecture
 
@@ -21,7 +21,7 @@ This guide covers deploying the complete ChainIQ system: two backend microservic
           │            │                    │
           │       ┌────▼──────────┐         │
           │       │  MySQL / RDS  │         │
-          │       │  (22 tables)  │◄────────┘
+          │       │  (38 tables)  │◄────────┘
           │       └───────────────┘
           │            ▲
           └────────────┘
@@ -56,11 +56,11 @@ The two compose stacks communicate via a shared Docker network called `chainiq-n
 ### 1.1 Clone and configure
 
 ```bash
-git clone https://github.com/your-org/chainIQ-START-Hack.git
-cd chainIQ-START-Hack
+git clone <your-repository-url>
+cd <repository-directory>
 
 # Root env (frontend + MySQL)
-cp .env.example .env
+cp .env.local.example .env.local
 
 # Backend env files
 cp backend/organisational_layer/.env.example backend/organisational_layer/.env
@@ -77,7 +77,16 @@ This is required once. Both compose stacks join this network so services can dis
 docker network create chainiq-network
 ```
 
-### 1.3 Start the backend stack
+### 1.3 Start local MySQL and bootstrap the database
+
+```bash
+docker compose --env-file .env.local --profile localdb up -d mysql
+docker compose --env-file .env.local --profile tools run --rm migrator
+```
+
+This creates all 38 tables and imports the dataset from `data/`.
+
+### 1.4 Start the backend stack
 
 ```bash
 cd backend
@@ -94,36 +103,22 @@ Wait for both to be healthy:
 docker compose ps
 ```
 
-### 1.4 Start the frontend stack
+### 1.5 Start the frontend stack
 
 ```bash
 cd ..   # back to repo root
-docker compose up --build
+docker compose --env-file .env.local up --build frontend
 ```
-
-This starts:
-- **mysql** on port 3306
-- **frontend** on port 3000
 
 For local hot reload development (`next dev`):
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+docker compose --env-file .env.local -f docker-compose.yml -f docker-compose.dev.yml up --build frontend
 ```
 
 Notes:
 - `docker-compose.override.yml` is intentionally minimal so deployment does not accidentally run in dev mode.
 - Use `docker-compose.dev.yml` only for local development.
-
-### 1.5 Bootstrap the database (first run only)
-
-After MySQL is healthy:
-
-```bash
-docker compose --profile tools run --rm migrator
-```
-
-This creates all 22 tables and imports the dataset from `data/`.
 
 ### 1.6 Verify
 
@@ -233,13 +228,13 @@ rsync -avz \
 **Option B — git clone on the instance:**
 
 ```bash
-git clone https://github.com/your-org/chainIQ-START-Hack.git /home/ec2-user/chainiq
+git clone <your-repository-url> /home/ec2-user/trailsiq
 ```
 
 ### 2.4 Configure environment variables
 
 ```bash
-cd /home/ec2-user/chainiq
+cd /home/ec2-user/trailsiq
 ```
 
 **Backend — Organisational Layer** (`backend/organisational_layer/.env`):
@@ -268,11 +263,11 @@ nano backend/logical_layer/.env
 ORGANISATIONAL_LAYER_URL=http://organisational-layer:8000
 ```
 
-**Frontend** (`.env`):
+**Frontend** (`.env.deployed`):
 
 ```bash
-cp .env.aws.example .env
-nano .env
+cp .env.deployed.example .env.deployed
+nano .env.deployed
 ```
 
 ```dotenv
@@ -299,7 +294,7 @@ mysql -h <RDS_ENDPOINT> -P 3306 -u admin -p<PASSWORD> chainiq -e "SELECT 1;"
 ### 2.6 Create the shared network and deploy
 
 ```bash
-cd /home/ec2-user/chainiq
+cd /home/ec2-user/trailsiq
 
 # Create the shared Docker network
 docker network create chainiq-network
@@ -313,10 +308,10 @@ docker compose ps
 
 # Start frontend (no MySQL needed — using RDS)
 cd ..
-docker compose up -d --build
+docker compose --env-file .env.deployed up -d --build frontend
 ```
 
-> On AWS the root compose doesn't need the local MySQL service. If you only need the frontend, the MySQL container will start but remain unused since backend connects directly to RDS. To avoid starting MySQL, you can scale it to zero: `docker compose up -d --build`
+> On AWS, start the root stack without the `localdb` profile when the backend uses RDS. The MySQL container is for local development only.
 
 ### 2.7 Bootstrap the database (first run only)
 
@@ -338,7 +333,7 @@ curl http://localhost:8080/health   # Logical Layer
 curl http://localhost:3000          # Frontend
 
 # Test the processing endpoint
-curl -X POST http://localhost:8080/api/process-request \
+curl -X POST http://localhost:8080/api/pipeline/process \
   -H "Content-Type: application/json" \
   -d '{"request_id": "REQ-000004"}'
 ```
@@ -364,10 +359,10 @@ A reference config is included at `deploy/nginx/aws.conf`. It routes:
 sudo dnf install -y nginx   # Amazon Linux
 # or: sudo apt-get install -y nginx   # Ubuntu
 
-sudo cp deploy/nginx/aws.conf /etc/nginx/conf.d/chainiq.conf
+sudo cp deploy/nginx/aws.conf /etc/nginx/conf.d/trailsiq.conf
 ```
 
-Edit `/etc/nginx/conf.d/chainiq.conf` to point upstreams to `127.0.0.1` instead of Docker service names (since nginx runs on the host, not in Docker):
+Edit `/etc/nginx/conf.d/trailsiq.conf` to point upstreams to `127.0.0.1` instead of Docker service names (since nginx runs on the host, not in Docker):
 
 ```nginx
 upstream frontend_upstream {
@@ -409,7 +404,7 @@ No `docker network create` is needed — each machine uses its own default netwo
 
 ## 5. Environment Variables Reference
 
-### Root compose (`.env`)
+### Root compose (`.env.local` or `.env.deployed`)
 
 | Variable | Default | Purpose |
 |---|---|---|
@@ -423,6 +418,7 @@ No `docker network create` is needed — each machine uses its own default netwo
 | `NEXT_PUBLIC_API_BASE_URL` | `/api` | Client-side API base path |
 | `ANTHROPIC_API_KEY` | _(empty)_ | Frontend server-only Anthropic key for `POST /api/chat/intake` |
 | `ANTHROPIC_MODEL` | `claude-3-7-sonnet-20250219` | Optional frontend intake-chat model override |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET_NAME` | _(empty)_ | Optional S3 upload configuration; upload route returns `503` when unset |
 
 ### Backend — Organisational Layer (`backend/organisational_layer/.env`)
 

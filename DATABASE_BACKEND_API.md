@@ -1,20 +1,20 @@
-# DATABASE_BACKEND_API.md — ChainIQ Organisational Layer API
+# DATABASE_BACKEND_API.md - TrailsIQ Organisational Layer API
 
-This document is the complete reference for the **Organisational Layer** — a FastAPI microservice that exposes the ChainIQ MySQL database (37 tables) over a REST API. Use it to understand every available endpoint, its parameters, and its response shape.
+This document is the complete reference for the **Organisational Layer**: a FastAPI microservice that exposes the TrailsIQ MySQL database (38 tables) over a REST API. Use it to understand every available endpoint, its parameters, and its response shape.
 
 - **Source code:** `backend/organisational_layer/`
-- **Deployment guide:** `backend/organisational_layer/DEPLOYMENT.md`
+- **Deployment guide:** `DEPLOYMENT.md`
 - **Database schema reference:** `DATABASE_STRUCTURE.md`
-- **Live Swagger UI:** `http://3.68.96.236:8000/docs`
-- **Live ReDoc:** `http://3.68.96.236:8000/redoc`
+- **Local Swagger UI:** `http://localhost:8000/docs`
+- **Local ReDoc:** `http://localhost:8000/redoc`
 
 ---
 
 ## Base URL
 
 ```
-http://3.68.96.236:8000/
-http://3.68.96.236:8000/docs#/
+http://localhost:8000/
+http://localhost:8000/docs#/
 ```
 
 All data endpoints are prefixed with `/api`.
@@ -23,7 +23,7 @@ All data endpoints are prefixed with `/api`.
 
 ## Authentication
 
-None. CORS is open (`*`) — all origins, methods, and headers are accepted. Suitable for hackathon use.
+None in this hackathon prototype. CORS is open (`*`) for local/demo use. Do not expose this API publicly without adding authentication, tightening CORS, and rotating deployment credentials.
 
 ---
 
@@ -2147,7 +2147,7 @@ Extract structured purchase request fields from raw text input.
 | Document | Purpose |
 |---|---|
 | `DATABASE_STRUCTURE.md` | Full MySQL schema — all tables, column types, FK relationships, row counts |
-| `backend/organisational_layer/DEPLOYMENT.md` | How to deploy this service to AWS EC2 with Docker |
+| `DEPLOYMENT.md` | How to run locally and deploy with Docker |
 | `backend/organisational_layer/CLAUDE.md` | Service development notes |
 | `backend/organisational_layer/LOGGING_API.md` | Pipeline logging, audit logging, and rule management API docs |
 | `database_init/CLAUDE.md` | How the database was populated |

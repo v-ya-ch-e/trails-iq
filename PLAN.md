@@ -345,7 +345,7 @@ Instead of flagging "information missing," generate a specific clarification req
 - [x] Frontend shell (5 pages, server components, shadcn v4)
 - [x] Docker deployment (two compose stacks on shared network)
 - [x] Database migration tooling (one-shot bootstrap)
-- [x] n8n integration documentation (`N8N_INSTRUCTION.md`)
+- [x] n8n integration notes captured during the hackathon
 - [x] Compliance checking per supplier (`checkCompliance.py` + `POST /api/check-compliance`)
 - [x] Policy evaluation assembly (`evaluatePolicy.py` + `POST /api/evaluate-policy`)
 - [x] Escalation fetching (`checkEscalations.py` + `POST /api/check-escalations`)
