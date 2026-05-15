@@ -7,7 +7,7 @@ ENV_DEPLOYED := .env.deployed
 .PHONY: help init-network env-local env-deployed backend-env local-up local-dev deployed-up local-down deployed-down local-logs backend-logs status reset-local-db
 
 help:
-	@echo "ChainIQ run commands"
+	@echo "TrailsIQ run commands"
 	@echo ""
 	@echo "Setup"
 	@echo "  make init-network      Create shared Docker network if missing"

@@ -1,36 +1,66 @@
-# dependencies
+# Dependencies
 node_modules/
 
-# next.js
+# Next.js
 .next/
 out/
+frontend/.next/
+frontend/out/
 
-# build
+# Build outputs
 build/
 dist/
 
-# env
-.env*
+# Environment secrets
+.env
+.env.*
+*.env
+backend/**/.env
+database_init/.env
+frontend/.env
+frontend/.env.*
+!.env.example
+!.env.local.example
+!.env.deployed.example
+!.env.aws.example
+!**/.env.example
+!**/.env.*.example
 
-# misc
-.DS_Store
-*.pem
+# Python
+venv/
+.venv/
+ENV/
+env/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# debug logs
+# Test output
+coverage/
+.coverage
+
+# Logs and temporary files
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# IDE
+# IDE and OS files
 .idea/
+.vscode/
+.DS_Store
+thumbs.db
 
-# vercel
+# Vercel
 .vercel
 
-# yarn
+# Yarn
 .pnp
 .pnp.*
 .yarn/*
@@ -39,41 +69,13 @@ yarn-error.log*
 !.yarn/releases
 !.yarn/versions
 
-# testing
-coverage/
-=======
-# Virtual enviroments
-venv/
-.venv/
-ENV/
-env/
-
-# Environment secrets
-.env
-
-# Cashe
-**/__pycache__/
-*.py[cod]
-*$py.class
-
-# JetBrains stuff
-.idea/
-
-# OS Files
-.DS_Store
-thumbs.db
-
-# Logs and temproraries
-*.log
-
-# Private keys
+# Private keys and certificates
 *.pem
 *.key
 *.crt
 *.csr
 *.p12
 *.p8
-*.p12
-*.p8
-*.p12
-*.p8
+
+# Other
+DEVPOST.md
