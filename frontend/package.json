@@ -1,7 +1,9 @@
 {
-  "name": "frontend",
+  "name": "trailsiq-frontend",
   "version": "0.1.0",
+  "description": "Next.js frontend for the TrailsIQ audit-ready sourcing prototype.",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
